@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Civil Engineering GPA Calculator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #1f2937;
+    }
+
+    header {
+      background: #b0003a;
+      color: white;
+      padding: 28px 18px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      font-size: 16px;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 16px 40px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .top-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .program-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #b0003a;
+    }
+
+    .info-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #b0003a;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-left: 8px;
+      position: relative;
+    }
+
+    .tooltip {
+      display: none;
+      position: absolute;
+      top: 32px;
+      right: 0;
+      width: 420px;
+      max-width: 86vw;
+      background: #111827;
+      color: white;
+      padding: 16px;
+      border-radius: 10px;
+      text-align: left;
+      font-size: 14px;
+      line-height: 1.45;
+      z-index: 10;
+      box-shadow: 0 5px 16px rgba(0,0,0,0.25);
+    }
+
+    .info-icon:hover .tooltip,
+    .info-icon:focus .tooltip {
+      display: block;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    button {
+      border: none;
+      background: #b0003a;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    button.secondary {
+      background: #1f2937;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .description {
+      color: #4b5563;
+      line-height: 1.5;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 850px;
+      margin-top: 12px;
+    }
+
+    th, td {
+      border: 1px solid #d1d5db;
+      padding: 10px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #111827;
+    }
+
+    tr.passed-yes {
+      background: #f0fdf4;
+    }
+
+    tr.passed-no {
+      background: #fff7ed;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .result-box {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .result-box h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      color: #6b7280;
+    }
+
+    .result-box .value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #b0003a;
+    }
+
+    .note {
+      font-size: 14px;
+      background: #fff7ed;
+      border-left: 5px solid #f97316;
+      padding: 12px;
+      border-radius: 8px;
+      color: #7c2d12;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 760px) {
+      .top-grid, .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      header h1 {
+        font-size: 23px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>GPA Calculator</h1>
+    <p>Civil Engineering - Introduction to AI Final Exam</p>
+  </header>
+
+  <main>
+    <section class="card top-grid">
+      <div>
+        <div class="program-name">Academic Program: Civil Engineering</div>
+        <p class="description">
+          This web application calculates GPA based on the student's transcript. It contains completed, failed, and currently in-progress courses, plus five additional Civil Engineering courses.
+        </p>
+      </div>
+
+      <div>
+        <strong>Information about GPA</strong>
+        <span class="info-icon" tabindex="0">i
+          <span class="tooltip">
+            <strong>GPA formula translated from Ilia State University regulation:</strong><br><br>
+            GPA is calculated by multiplying each course's Grade Point (GP) by the number of credits for that course, adding these values together, and dividing by the total number of credits used in the calculation.<br><br>
+            Formula: GPA = Σ(GP × course credits) / Σ(course credits).<br><br>
+            GP scale: F = 0-50 points = 0.00; E = 51-60 = 1.00; D = 61-70 = 1.83; C = 71-80 = 2.67; B = 81-90 = 3.50; A = 91-95 = 3.92; A+ = 96-100 = 4.00. For scores between 61 and 95, GP increases by approximately 1/12 for each point.
+          </span>
+        </span>
+        <p class="description">
+          Hover over or click the information icon to read the English translation of the GPA rule.
+        </p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Course List</h2>
+      <p class="description">
+        The table automatically loads when the page opens. Columns: course, credit, grade, and passed.
+      </p>
+
+      <div class="button-row">
+        <button onclick="calculateGPA()">Calculate</button>
+        <button class="secondary" onclick="calculateWithAI()">Calculate with Introduction to AI</button>
+      </div>
+
+      <p class="note">
+        The second button assumes that the final score for <strong>Introduction to Artificial Intelligence (ENG)</strong> equals current accumulated points plus 30 final exam points. Current accumulated score is 55, so the assumed final score is 85.
+      </p>
+
+      <div class="table-wrap">
+        <table id="coursesTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Course</th>
+              <th>Credit</th>
+              <th>Grade</th>
+              <th>Passed</th>
+              <th>GP</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Results</h2>
+      <div class="result-grid">
+        <div class="result-box">
+          <h3>Calculated GPA</h3>
+          <div class="value" id="gpaResult">-</div>
+        </div>
+        <div class="result-box">
+          <h3>Credits included</h3>
+          <div class="value" id="creditsResult">-</div>
+        </div>
+        <div class="result-box">
+          <h3>Mode</h3>
+          <div class="value" id="modeResult">-</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const courses = [
+      { course: "Academic Writing Techniques (ENG)", credit: 6, grade: 96, passed: "Yes" },
+      { course: "Business Basics (ENG)", credit: 6, grade: 60, passed: "No" },
+      { course: "Biology for Engineers (ENG)", credit: 6, grade: 82, passed: "Yes" },
+      { course: "Economic Thinking (ENG)", credit: 4, grade: 68, passed: "Yes" },
+      { course: "English Practical Course C1-1 (ENG)", credit: 6, grade: 94, passed: "Yes" },
+      { course: "English Practical Course C1-2 (ENG)", credit: 6, grade: 73, passed: "Yes" },
+      { course: "Calculus I (ENG)", credit: 6, grade: 51, passed: "Yes" },
+      { course: "Calculus II (ENG) - failed attempt", credit: 6, grade: 0, passed: "No" },
+      { course: "Calculus II (ENG) - current", credit: 6, grade: 0, passed: "No" },
+      { course: "Physics I - Laboratory (ENG) - failed attempt", credit: 8, grade: 19, passed: "No" },
+      { course: "Physics I - Laboratory (ENG)", credit: 8, grade: 65.5, passed: "Yes" },
+      { course: "Physics II (ENG)", credit: 6, grade: 100, passed: "Yes" },
+      { course: "General Chemistry Laboratory (ENG)", credit: 8, grade: 88, passed: "Yes" },
+      { course: "Introduction to Probabilities I (ENG)", credit: 6, grade: 54, passed: "Yes" },
+      { course: "Computer Graphics for Construction Engineering (ENG)", credit: 6, grade: 87, passed: "Yes" },
+      { course: "Project Management for Engineers (ENG)", credit: 4, grade: 0, passed: "No" },
+      { course: "Systems, Sustainability and Climate Change - Introduction (ENG)", credit: 6, grade: 74, passed: "Yes" },
+      { course: "Engineering Drawing (ENG) - failed attempt", credit: 6, grade: 32.05, passed: "No" },
+      { course: "Engineering Drawing (ENG) - failed attempt 2", credit: 6, grade: 0, passed: "No" },
+      { course: "Engineering Drawing (ENG)", credit: 6, grade: 94, passed: "Yes" },
+      { course: "Introduction to Energy Systems and Technologies (ENG)", credit: 6, grade: 79, passed: "Yes" },
+      { course: "Introduction to Construction Engineering (ENG)", credit: 2, grade: 93, passed: "Yes" },
+      { course: "Introduction to Artificial Intelligence (ENG)", credit: 6, grade: 55, passed: "No" },
+
+      /* Five additional Civil Engineering courses required by the task */
+      { course: "Structural Mechanics (ENG)", credit: 6, grade: 100, passed: "Yes" },
+      { course: "Construction Materials (ENG)", credit: 6, grade: 100, passed: "Yes" },
+      { course: "Surveying and Geodesy (ENG)", credit: 6, grade: 100, passed: "Yes" },
+      { course: "Structural Analysis I (ENG)", credit: 6, grade: 100, passed: "Yes" },
+      { course: "Hydraulics (ENG)", credit: 6, grade: 100, passed: "Yes" }
+    ];
+
+    function getGP(score) {
+      score = Number(score);
+
+      if (score <= 50) {
+        return 0.00;
+      }
+
+      if (score >= 51 && score <= 60) {
+        return 1.00;
+      }
+
+      if (score >= 61 && score <= 95) {
+        return 1 + ((score - 60) / 12);
+      }
+
+      if (score >= 96) {
+        return 4.00;
+      }
+
+      return 0.00;
+    }
+
+    function renderTable(courseData = courses) {
+      const tbody = document.querySelector("#coursesTable tbody");
+      tbody.innerHTML = "";
+
+      courseData.forEach((item, index) => {
+        const tr = document.createElement("tr");
+        tr.className = item.passed === "Yes" ? "passed-yes" : "passed-no";
+
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${item.course}</td>
+          <td>${item.credit}</td>
+          <td>${item.grade}</td>
+          <td>${item.passed}</td>
+          <td>${getGP(item.grade).toFixed(2)}</td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function calculateFromData(courseData) {
+      let totalWeightedGP = 0;
+      let totalCredits = 0;
+
+      courseData.forEach(item => {
+        if (item.passed === "Yes") {
+          const gp = getGP(item.grade);
+          totalWeightedGP += gp * item.credit;
+          totalCredits += item.credit;
+        }
+      });
+
+      const gpa = totalCredits > 0 ? totalWeightedGP / totalCredits : 0;
+
+      return {
+        gpa: gpa,
+        credits: totalCredits
+      };
+    }
+
+    function calculateGPA() {
+      renderTable(courses);
+      const result = calculateFromData(courses);
+
+      document.getElementById("gpaResult").textContent = result.gpa.toFixed(2);
+      document.getElementById("creditsResult").textContent = result.credits;
+      document.getElementById("modeResult").textContent = "Current";
+    }
+
+    function calculateWithAI() {
+      const modifiedCourses = courses.map(item => {
+        if (item.course === "Introduction to Artificial Intelligence (ENG)") {
+          return {
+            ...item,
+            grade: 85,
+            passed: "Yes"
+          };
+        }
+        return item;
+      });
+
+      renderTable(modifiedCourses);
+      const result = calculateFromData(modifiedCourses);
+
+      document.getElementById("gpaResult").textContent = result.gpa.toFixed(2);
+      document.getElementById("creditsResult").textContent = result.credits;
+      document.getElementById("modeResult").textContent = "With AI";
+    }
+
+    window.onload = function() {
+      renderTable(courses);
+    };
+  </script>
+</body>
+</html>
